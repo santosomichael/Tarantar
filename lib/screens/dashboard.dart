@@ -7,15 +7,26 @@ class Dashboard extends StatefulWidget {
   }
 }
 
-class OrderList {
+class Order {
+  int id;
+  String name;
 
+  Order({this.id, this.name});
 }
 
 class DashboardState extends State<Dashboard> {
-  List<OrderList> orderList = [OrderList(),OrderList(),OrderList(),OrderList(),OrderList(),];
+  List<Order> orderList = [
+    Order(id:1, name: "Garlic Cheese"),
+    Order(id:2, name: "Korean Barbeque"),
+    Order(id:3, name: "Samyang"),
+    Order(id:4, name: "Indomie Ceplok"),
+    Order(id:5, name: "Indomie Ceplok"),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    double mediaWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -70,47 +81,64 @@ class DashboardState extends State<Dashboard> {
             ListView.builder(
               itemCount: orderList.length,
               itemBuilder: (BuildContext context, int index) {
+                final item = orderList[index];
                 return Card(
-                  child: Container(
-                    height: 75,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex:1,
-                          child: Container()
-                        ),
-                        Expanded(
-                          flex:1,
-                          child: Container(
-                            color: Colors.grey,
-                            height: 40,
-                            width: 40,
-                            child: ClipOval(
-                              // borderRadius: BorderRadius.circular(50),
+                  child: InkWell(
+                    child: Container(
+                      height: 75,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex:1,
+                            child: Container()
+                          ),
+                          Expanded(
+                            flex:1,
+                            child: Container(
+                              color: Colors.grey,
+                              height: 40,
+                              width: 40,
+                              child: ClipOval(
+                                // borderRadius: BorderRadius.circular(50),
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex:1,
-                          child: Container()
-                        ),
-                        Expanded(
-                          flex:7,
-                          child: Text("Gambar"),
-                        ),
-                      ],
-                    )
+                          Expanded(
+                            flex:1,
+                            child: Container()
+                          ),
+                          Expanded(
+                            flex:7,
+                            child: Text(item.name),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      customNavigator(context, "orderDetail");
+                    },
                   )
                 );
               }
             )
           ),
-          RaisedButton(
-            color: Colors.green,
-            child: Text("Tambah Pesanan", style: TextStyle(color: Colors.white)),
-            onPressed: () {
-              customNavigator(context, "orderForm");
-            },
+
+          Container(
+            padding: EdgeInsets.only(bottom: 25),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+              color: Color(0XFF2e7d32),
+              child: Container(
+                width: mediaWidth - 100,
+                height: 50,
+                child: Center(
+                  child: Text("Tambah Pesanan", style: TextStyle(color: Colors.white))
+                )
+              ),
+              onPressed: () {
+                customNavigator(context, "orderForm");
+              },
+            ),
           )
         ],
       ),
