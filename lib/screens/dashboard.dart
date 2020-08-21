@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:tarantar/configuration.dart';
 import 'package:tarantar/tools/functions.dart';
+import 'package:tarantar/widgets/customText.dart';
+import 'package:tarantar/models/order.dart';
 
 class Dashboard extends StatefulWidget {
   createState() {
     return DashboardState();
   }
-}
-
-class Order {
-  int id;
-  String name;
-
-  Order({this.id, this.name});
 }
 
 class DashboardState extends State<Dashboard> {
@@ -30,17 +26,22 @@ class DashboardState extends State<Dashboard> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("Tarantar"),
+        title: CustomText("Tarantar", color: Colors.black, family: "Montserrat"),
         iconTheme: IconThemeData(
           color: Colors.green
         ),
+        leading: null,
+        automaticallyImplyLeading: false,
         actions: [
-          Icon(Icons.person)
-          // Image.asset(
-          //   getAssetImages("account.png"),
-          //   height: 40,
-          //   width: 40
-          // )
+          Padding(
+            padding: EdgeInsets.only(right: 15),
+            child: Image.asset(
+              getAssetImages("account.png"),
+              height: 30,
+              width: 30
+            )
+          )
+          
         ],
       ),
       body: Column(
@@ -72,7 +73,7 @@ class DashboardState extends State<Dashboard> {
                       height: 300,
                       width: 300
                     ),
-                    Text("Kamu tidak\nmempunyai pesanan", textAlign: TextAlign.center),
+                    CustomText("Kamu tidak\nmempunyai pesanan", textAlign: TextAlign.center),
                   ],
                 );
               }
@@ -109,7 +110,7 @@ class DashboardState extends State<Dashboard> {
                           ),
                           Expanded(
                             flex:7,
-                            child: Text(item.name),
+                            child: CustomText(item.name),
                           ),
                         ],
                       ),
@@ -124,15 +125,15 @@ class DashboardState extends State<Dashboard> {
           ),
 
           Container(
-            padding: EdgeInsets.only(bottom: 25),
+            padding: EdgeInsets.only(bottom: 10),
             child: RaisedButton(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-              color: Color(0XFF2e7d32),
+              color: c.primaryColor,
               child: Container(
                 width: mediaWidth - 100,
                 height: 50,
                 child: Center(
-                  child: Text("Tambah Pesanan", style: TextStyle(color: Colors.white))
+                  child: CustomText("Tambah Pesanan", color: Colors.white)
                 )
               ),
               onPressed: () {

@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:tarantar/configuration.dart';
 import 'package:tarantar/tools/functions.dart';
+import 'package:tarantar/widgets/customText.dart';
+import 'package:tarantar/widgets/customTextField.dart';
+import 'package:tarantar/models/address.dart';
 
 class OrderDelivered extends StatefulWidget {
   createState() {
     return OrderDeliveredState();
   }
-}
-
-class Address {
-  int id;
-  String name;
-  String phone;
-  String address;
-  String latitude;
-  String longitude;
-
-  Address({this.id, this.name, this.phone, this.address, this.latitude, this.longitude});
 }
 
 class OrderDeliveredState extends State<OrderDelivered> {
@@ -34,7 +27,7 @@ class OrderDeliveredState extends State<OrderDelivered> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("Buat Pesanan", style: TextStyle(color: Colors.black)),
+        title: CustomText("Buat Kirim", family: "Montserrat",),
         iconTheme: IconThemeData(
           color: Colors.green
         ),
@@ -51,7 +44,7 @@ class OrderDeliveredState extends State<OrderDelivered> {
                       elevation: 0,
                       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,17 +70,19 @@ class OrderDeliveredState extends State<OrderDelivered> {
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("Korean Garlic Cheese Bread", style: TextStyle(fontWeight: FontWeight.bold)),
-                                        Text("@Rp. 10.000", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0XFF2e7d32)))
+                                        CustomText("Botol", family: "Montserrat", fontSize: 20),
+                                        CustomText("@Rp. 10.000", fontWeight: FontWeight.bold, color: c.primaryColor, family: "Montserrat")
                                       ],
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            Divider(),
-                            Text("Tanggal Order", style: TextStyle(fontWeight: FontWeight.bold)),
-                            Text("Jl. Siwalankerto Timur Blok A7 No 23, Siwalankerto Surabaya. 0812318233912"),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                            CustomText("Nathanael Rayestu", family: "Montserrat"),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                            CustomText("Jl Siwalankerto Blok A7 No 23, Siwalankerto, Surabaya. 081335611166"),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                           ],
                         ),
                       ),
@@ -110,14 +105,15 @@ class OrderDeliveredState extends State<OrderDelivered> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.camera_alt),
-                                      Text("Ambil Gambar")
+                                      Icon(Icons.camera_alt, size: 32),
+                                      CustomText("Ambil Gambar", fontWeight: FontWeight.bold)
                                     ],
                                   )
                                 )
                               )
                             ),
-                            Text("Pastikan barang terfoto dengan jelas"),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                            CustomText("Pastikan barang terfoto dengan jelas", fontStyle: FontStyle.italic, fontSize: 12, color: Colors.grey),
                           ],
                         ),
                       ),
@@ -131,12 +127,10 @@ class OrderDeliveredState extends State<OrderDelivered> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Catatan (Opsional)"),
-                            TextField(
-                              decoration: InputDecoration(
-                                hintText: "Masukan Catatan",
-                              ),
-                            ),
+                            CustomText("Catatan (Opsional)"),
+                            CustomTextField(hintText: "Masukan Catatan"),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                            CustomText("Contoh: Barang dititipkan di satpam", fontStyle: FontStyle.italic, fontSize: 12, color: Colors.grey),
                           ],
                         ),
                       ),
@@ -165,7 +159,7 @@ class OrderDeliveredState extends State<OrderDelivered> {
                           child: Container(
                             height: 50,
                             child: Center(
-                              child: Icon(Icons.call, color: Color(0XFF2e7d32))
+                              child: Icon(Icons.call, color: c.primaryColor)
                             )
                           ),
                           onPressed: () {
@@ -182,7 +176,11 @@ class OrderDeliveredState extends State<OrderDelivered> {
                           child: Container(
                             height: 50,
                             child: Center(
-                              child: Icon(Icons.call_end, color: Color(0XFF2e7d32))
+                              child: Image.asset(
+                                getAssetImages("iconWa.png"),
+                                height: 25,
+                                width: 25
+                              ),
                             )
                           ),
                           onPressed: () {
@@ -195,11 +193,11 @@ class OrderDeliveredState extends State<OrderDelivered> {
                         flex:20,
                         child: RaisedButton(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                          color: Color(0XFF2e7d32),
+                          color: c.primaryColor,
                           child: Container(
                             height: 50,
                             child: Center(
-                              child: Text("Kirim & Lanjut", style: TextStyle(color: Colors.white))
+                              child: CustomText("Kirim & Lanjut", color: Colors.white, fontWeight: FontWeight.bold)
                             )
                           ),
                           onPressed: () {

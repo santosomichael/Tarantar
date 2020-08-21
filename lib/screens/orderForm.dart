@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tarantar/configuration.dart';
 import 'package:tarantar/tools/functions.dart';
+import 'package:tarantar/widgets/customText.dart';
+import 'package:tarantar/widgets/customTextField.dart';
+import 'package:tarantar/models/order.dart';
 
 class OrderForm extends StatefulWidget {
   createState() {
@@ -7,12 +11,8 @@ class OrderForm extends StatefulWidget {
   }
 }
 
-class OrderList {
-
-}
-
 class OrderFormState extends State<OrderForm> {
-  List<OrderList> orderList = [];
+  List<Order> orderList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class OrderFormState extends State<OrderForm> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("Buat Pesanan", style: TextStyle(color: Colors.black)),
+        title: CustomText("Buat Pesanan", color: Colors.black, family: "Montserrat"),
         iconTheme: IconThemeData(
           color: Colors.green
         ),
@@ -43,7 +43,7 @@ class OrderFormState extends State<OrderForm> {
               children: [
                 Card(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -65,13 +65,13 @@ class OrderFormState extends State<OrderForm> {
                                   // color: Colors.grey,
                                   child: Container(
                                     padding: EdgeInsets.all(15),
-                                    child: Text("Besar File Maksimum", style: TextStyle(color: Colors.black))
+                                    child: CustomText("Besar File Maksimum", color: Colors.black)
                                   ),
                                 ),
                                 OutlineButton(
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                                   color: Colors.white,
-                                  child: Text("Upload Foto", style: TextStyle(color: Colors.black)),
+                                  child: CustomText("Upload Foto", color: Colors.black),
                                   onPressed: () {
                                     
                                   },
@@ -82,11 +82,11 @@ class OrderFormState extends State<OrderForm> {
                                 //     child: Column(
                                 //       mainAxisSize: MainAxisSize.min,
                                 //       children: [
-                                //         Text("Besar File Maksimum", style: TextStyle(color: Colors.black)),
-                                //         Text("2 Megabyte (2MB)"),
+                                //         CustomText("Besar File Maksimum", style: TextStyle(color: Colors.black)),
+                                //         CustomText("2 Megabyte (2MB)"),
                                 //         Spacer(),
-                                //         Text("File yang diperbolehkan"),
-                                //         Text("JPG, JPEG, PNG"),
+                                //         CustomText("File yang diperbolehkan"),
+                                //         CustomText("JPG, JPEG, PNG"),
                                 //       ]
                                 //     )
                                 //   )
@@ -96,12 +96,8 @@ class OrderFormState extends State<OrderForm> {
                           ],
                         ),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        Text("Nama Pesanan"),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Masukkan Nama Pesanan",
-                          ),
-                        ),
+                        CustomText("Nama Pesanan"),
+                        CustomTextField(hintText: "Masukkan Nama Pesanan",),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                         Row(
                           children: [
@@ -110,12 +106,8 @@ class OrderFormState extends State<OrderForm> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Tanggal Penjemputan"),
-                                  TextField(
-                                    decoration: InputDecoration(
-                                      hintText: "19 Agustus 2020",
-                                    ),
-                                  ),
+                                  CustomText("Tanggal Penjemputan"),
+                                  CustomTextField(hintText: "19 Agustus 2020")
                                 ]
                               )
                             ),
@@ -125,12 +117,8 @@ class OrderFormState extends State<OrderForm> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Jam Penjemputan"),
-                                  TextField(
-                                    decoration: InputDecoration(
-                                      hintText: "19:20",
-                                    ),
-                                  ),
+                                  CustomText("Jam Penjemputan"),
+                                  CustomTextField(hintText: "19:20"),
                                 ]
                               )
                             )
@@ -141,66 +129,59 @@ class OrderFormState extends State<OrderForm> {
                     ),
                   ),
                 ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 Card(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Detail Barang", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        CustomText("Detail Barang", fontWeight: FontWeight.bold, fontSize: 16, family: "Montserrat"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        Text("Kategori"),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Masukkan Nama Pesanan",
-                          ),
-                        ),
+
+                        CustomText("Kategori"),
+                        CustomTextField(hintText: "Masukkan Nama Pesanan"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        Text("Jumlah Barang"),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Masukkan Jumlah Barang",
-                          ),
-                        ),
-                        Text("Dimensi per Barang"),
+
+                        CustomText("Jumlah Barang"),
+                        CustomTextField(hintText: "Masukkan Jumlah Barang"),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 2.5)),
+                        CustomText("Format: Panjang x Lebar x Tinggi", fontStyle: FontStyle.italic, color: Colors.grey),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Masukkan Dimensi Barang",
-                          ),
-                        ),
+
+                        CustomText("Dimensi per Barang"),
+                        CustomTextField(hintText: "Masukkan Dimensi Barang"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        Text("Berat per Barang"),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Masukkan Dimensi Barang",
-                          ),
+
+                        Row(
+                          children: [
+                            CustomText("Berat per Barang "),
+                            Icon(Icons.info, color: c.primaryColor, size: 16)
+                          ],
                         ),
+                        CustomTextField(hintText: "Masukkan Berat Barang"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        Text("Catatan"),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Masukkan Catatan",
-                          ),
-                        ),
+
+                        CustomText("Catatan"),
+                        CustomTextField(hintText: "Masukkan Catatan"),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 2.5)),
+                        CustomText("Contoh: Barang jangan dibalik balik", fontStyle: FontStyle.italic, color: Colors.grey),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                       ]
                     ),
                   ),
                 ),
+                Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                 Card(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Lokasi Penjemputan", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        CustomText("Lokasi Penjemputan", fontWeight: FontWeight.bold, fontSize: 16, family: "Montserrat"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        Text("Alamat Penjemputan"),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: "Masukkan Alamat Penjemputan",
-                          ),
-                        ),
+                        CustomText("Alamat Penjemputan"),
+                        CustomTextField(hintText: "Masukkan Alamat Penjemputan"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +192,7 @@ class OrderFormState extends State<OrderForm> {
                               margin: EdgeInsets.only(right: 15),
                               child: RaisedButton(
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                                color: Color(0XFF2e7d32),
+                                color: c.primaryColor,
                                 child: Icon(Icons.pin_drop, color: Colors.white, size: 40),
                                 onPressed: () {
                                   
@@ -223,13 +204,9 @@ class OrderFormState extends State<OrderForm> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  TextField(
-                                    decoration: InputDecoration(
-                                      hintText: "Masukkan Alamat Penjemputan",
-                                    ),
-                                  ),
+                                  CustomTextField(hintText: "Masukkan Alamat Penjemputan"),
                                   Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                                  Text("Pastikan lokasi yang Anda tandai di peta sesuai dengan alamat yang Anda isi di atas")
+                                  CustomText("Pastikan lokasi yang Anda tandai di peta sesuai dengan alamat yang Anda isi di atas", fontStyle: FontStyle.italic, color: Colors.grey)
                                 ],
                               ),
                             ),
@@ -243,12 +220,12 @@ class OrderFormState extends State<OrderForm> {
                   padding: EdgeInsets.only(bottom: 10, top: 10),
                   child: RaisedButton(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                    color: Color(0XFF2e7d32),
+                    color: c.primaryColor,
                     child: Container(
                       width: mediaWidth - 70,
                       height: 50,
                       child: Center(
-                        child: Text("Buat Pesanan", style: TextStyle(color: Colors.white))
+                        child: CustomText("Buat Pesanan", color: Colors.white, fontWeight: FontWeight.bold)
                       )
                     ),
                     onPressed: () {
@@ -256,7 +233,7 @@ class OrderFormState extends State<OrderForm> {
                         context: context,
                         title: "Berhasil",
                         showIcon: false,
-                        content: Text("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
+                        content: CustomText("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
                         cancel: false,
                         defaultAction: () async {
                           Navigator.of(context).pop();

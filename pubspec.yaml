@@ -47,6 +47,7 @@ flutter:
   assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
+   - lib/assets/images/iconWa.png
    - lib/assets/images/account.png
    - lib/assets/images/orderNotFound.png
 
@@ -61,6 +62,14 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: lib/assets/fonts/Montserrat-Bold.otf
+    - family: Gotham
+      fonts:
+        - asset: lib/assets/fonts/GothamHTF-Book.otf
+          
   # fonts:
   #   - family: Schyler
   #     fonts:

@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
+import 'package:tarantar/configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tarantar/tools/functions.dart';
+import 'package:tarantar/widgets/customText.dart';
+import 'package:tarantar/models/order.dart';
 
 class OrderDetail extends StatefulWidget {
   createState() {
@@ -11,21 +14,19 @@ class OrderDetail extends StatefulWidget {
   }
 }
 
-class OrderList {
-  
-}
-
 class OrderDetailState extends State<OrderDetail> {
   GoogleMapController mapController;
-  List<OrderList> orderList = [];
+  List<Order> orderList = [];
   LatLng _kMapCenter = LatLng(-7.3329142, 112.7785162);
   Set<Circle> circleSet = Set.from([]);
 
-  int orderStatus = 4;
+  int selectedMessageValue = 0;
+  int orderStatus = 2;
   // 1 dibatalkan
   // 2 dibuat, mencari driver
-  // 3 driver ditemukan
-  // 4 mulai mengantar
+  // 3 menunggu driver ada yang diterima
+  // 4 menunggu mulai antar
+  // 5 mulai mengantar
 
   int userRole = 2;
   // 1 sender
@@ -76,12 +77,12 @@ class OrderDetailState extends State<OrderDetail> {
                 flex:1,
                 child: Icon(
                   i == 0 ? Icons.person_pin_circle:Icons.swap_vertical_circle,
-                  color: i == 0 ? Colors.blueAccent:Color(0XFF2e7d32)
+                  color: i == 0 ? Colors.blueAccent:c.primaryColor
                 ),
               ),
               Expanded(
                 flex:9,
-                child: Text(item, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.bold))
+                child: CustomText(item, maxLines: 1, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold)
               ),
             ]
           ),
@@ -96,7 +97,7 @@ class OrderDetailState extends State<OrderDetail> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("Pesanan", style: TextStyle(color: Colors.black)),
+        title: CustomText("Pesanan", color: Colors.black, family: "Montserrat"),
         iconTheme: IconThemeData(
           color: Colors.green
         ),
@@ -116,11 +117,11 @@ class OrderDetailState extends State<OrderDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // kalau orderan berjalan, rute yang harus dikunjungi akan di atas
-                          if (orderStatus == 4)
+                          if (orderStatus == 5)
                           ...addressWidgetList,
                           Container(
                             width: mediaWidth,
-                            height: orderStatus != 4 ? mediaWidth * 0.75 : mediaWidth * 1.5,
+                            height: orderStatus != 5 ? mediaWidth * 0.75 : mediaWidth * 1.5,
                             child: GoogleMap(
                               onMapCreated: _onMapCreated,
                               compassEnabled: true,
@@ -137,7 +138,7 @@ class OrderDetailState extends State<OrderDetail> {
                               ].toSet(),
                             )
                           ),
-                          if (orderStatus != 4)
+                          if (orderStatus != 5)
                           ...addressWidgetList
                         ],
                       ),
@@ -145,9 +146,8 @@ class OrderDetailState extends State<OrderDetail> {
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
 
                     // pesanan mulai diantarkan
-                    if (orderStatus != 4)
+                    if (orderStatus != 5)
                     Card(
-                      elevation: 5,
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         child: Column(
@@ -164,63 +164,67 @@ class OrderDetailState extends State<OrderDetail> {
                                 child: Row(
                                   children: [
                                     Container(
-                                      color: Colors.grey,
                                       height: 40,
                                       width: 40,
-                                      child: ClipOval(
-                                        // borderRadius: BorderRadius.circular(50),
+                                      child: Image.network(
+                                        "https://sweetrip.id/wp-content/uploads/2020/05/duniakulinersurabaya_84272350_541137659861429_5681105554989196814_n.jpg",
                                       ),
                                     ),
                                     Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("Korean Garlic Cheese Bread", style: TextStyle(fontWeight: FontWeight.bold)),
-                                        Text("@Rp. 10.000", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0XFF2e7d32)))
+                                        CustomText("Botol", family: "Montserrat", fontSize: 20),
+                                        Row(
+                                          children: [
+                                            CustomText("@Rp. 10.000", fontWeight: FontWeight.bold, color: c.primaryColor, family: "Montserrat"),
+                                            CustomText(" (2 titik tujuan)", fontSize: 10),
+                                          ],
+                                        ),
+                                        CustomText("20 pcs", fontSize: 10, fontWeight: FontWeight.bold),
                                       ],
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            Divider(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("Tanggal Order", style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text("Nomor Order", style: TextStyle(fontWeight: FontWeight.bold))
+                                CustomText("Tanggal Order", fontWeight: FontWeight.bold),
+                                CustomText("Nomor Order", fontWeight: FontWeight.bold),
                               ],
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("23 Agustus 2020"),
-                                Text("X1001/192320")
-                              ],
-                            ),
-                            Divider(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Tanggal & Jam Pengambilan"),
-                                Text("27 Agustus 2020 19:00", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0XFF2e7d32)))
+                                CustomText("23 Agustus 2020", fontSize: 12),
+                                CustomText("X1001/192320", fontSize: 12)
                               ],
                             ),
                             Divider(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                CustomText("Tanggal & Jam Pengambilan", fontSize: 10),
+                                CustomText("27 Agustus 2020 19:00", fontWeight: FontWeight.bold, color: c.primaryColor, family: "Montserrat", fontSize: 12)
+                              ],
+                            ),
+                            Divider(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
                                 Expanded(
-                                  flex:3,
-                                  child: Text("Total Barang"),
+                                  flex:5,
+                                  child: CustomText("Kategori", fontSize: 12),
                                 ),
                                 Expanded(
                                   flex:1,
-                                  child: Text(":\t\t", textAlign: TextAlign.end),
+                                  child: CustomText(":\t\t", textAlign: TextAlign.end),
                                 ),
                                 Expanded(
                                   flex:6,
-                                  child: Text("20 pcs", textAlign: TextAlign.start, style: TextStyle(fontWeight: FontWeight.bold))
+                                  child: CustomText("Minuman", textAlign: TextAlign.start, fontWeight: FontWeight.bold, fontSize: 12)
                                 ),
                               ],
                             ),
@@ -228,16 +232,16 @@ class OrderDetailState extends State<OrderDetail> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  flex:3,
-                                  child: Text("Berat Total"),
+                                  flex:5,
+                                  child: CustomText("Berat Total", fontSize: 12),
                                 ),
                                 Expanded(
                                   flex:1,
-                                  child: Text(":\t\t", textAlign: TextAlign.end),
+                                  child: CustomText(":\t\t", textAlign: TextAlign.end),
                                 ),
                                 Expanded(
                                   flex:6,
-                                  child: Text("800 gr", textAlign: TextAlign.start, style: TextStyle(fontWeight: FontWeight.bold))
+                                  child: CustomText("800 gr", textAlign: TextAlign.start, fontWeight: FontWeight.bold, fontSize: 12)
                                 ),
                               ],
                             ),
@@ -245,16 +249,16 @@ class OrderDetailState extends State<OrderDetail> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  flex:3,
-                                  child: Text("Dimensi (cm)"),
+                                  flex:5,
+                                  child: CustomText("Dimensi per produk (cm)", fontSize: 12),
                                 ),
                                 Expanded(
                                   flex:1,
-                                  child: Text(":\t\t", textAlign: TextAlign.end),
+                                  child: CustomText(":\t\t", textAlign: TextAlign.end),
                                 ),
                                 Expanded(
                                   flex:6,
-                                  child: Text("100 x 120 x 30", style: TextStyle(fontWeight: FontWeight.bold))
+                                  child: CustomText("100 x 120 x 30", fontWeight: FontWeight.bold, fontSize: 12)
                                 ),
                               ],
                             ),
@@ -262,29 +266,33 @@ class OrderDetailState extends State<OrderDetail> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  flex:3,
-                                  child: Text("Tipe Kendaraan"),
+                                  flex:5,
+                                  child: CustomText("Tipe Kendaraan", fontSize: 12),
                                 ),
                                 Expanded(
                                   flex:1,
-                                  child: Text(":\t\t", textAlign: TextAlign.end),
+                                  child: CustomText(":\t\t", textAlign: TextAlign.end),
                                 ),
                                 Expanded(
                                   flex:6,
                                   child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Chip(
-                                      backgroundColor: Color(0XFF2e7d32),
-                                      padding: EdgeInsets.all(0),
-                                      label: Text("Mobil", style: TextStyle(color: Colors.white))
-                                    ),
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                                      color: c.primaryColor,
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                        child: CustomText("Mobil", color: Colors.white, fontSize: 12)
+                                      )
+                                    )
                                   )
                                 ),
                               ],
                             ),
                             Divider(),
-                            Text("Catatan :"),
-                            Text("Jangan dibalik balik.", style: TextStyle(fontWeight: FontWeight.w600)),
+                            CustomText("Catatan :", fontSize: 12),
+                            Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                            CustomText("Jangan dibalik balik.", fontWeight: FontWeight.bold, fontSize: 12),
                             Padding(padding: EdgeInsets.symmetric(vertical: 20))
                           ],
                         ),
@@ -292,24 +300,25 @@ class OrderDetailState extends State<OrderDetail> {
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
 
-                    if (orderStatus != 4)
+                    if (orderStatus != 5)
                     Card(
-                      elevation: 5,
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Informasi Sender", style: TextStyle(fontWeight: FontWeight.bold)),
+                            CustomText("Informasi Sender", family: "Montserrat"),
                             Container(
                               height: 60,
                               child: Row(
                                 children: [
                                   ClipOval(
                                     child: Container(
-                                    color: Colors.grey,
                                       height: 40,
                                       width: 40,
+                                      child: Image.network(
+                                        "https://www.1999.co.jp/itbig54/10547622.jpg",
+                                      ),
                                     ),
                                   ),
                                   Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
@@ -317,11 +326,12 @@ class OrderDetailState extends State<OrderDetail> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("Reza Ultraman", style: TextStyle(fontWeight: FontWeight.bold)),
+                                      CustomText("Reza Ultraman", fontWeight: FontWeight.bold),
+                                      Padding(padding: EdgeInsets.symmetric(vertical: 2)),
                                       Container(
                                         padding: EdgeInsets.all(2),
                                         color: Color(0xFFedfeee),
-                                        child: Text("0821123873677", style: TextStyle(color: Colors.green))
+                                        child: CustomText("0821123873677", color: Colors.green)
                                       ),
                                     ],
                                   ),
@@ -343,9 +353,37 @@ class OrderDetailState extends State<OrderDetail> {
             elevation: 10,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: getBottomButtonWidgetList()
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (orderStatus == 5 && userRole == 2)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomText("Nathanael Rayestu", family: "Montserrat"),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 2)),
+                        CustomText("Jl Siwalankerto Blok A7 No 23, Siwalankerto, Surabaya. 081335611166")
+                      ]
+                    )
+                  ),
+                  if (orderStatus == 5 && userRole == 2)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Divider()
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: getBottomButtonWidgetList()
+                  ),
+                ],
               ),
             ),
           )
@@ -358,19 +396,18 @@ class OrderDetailState extends State<OrderDetail> {
     double mediaWidth = MediaQuery.of(context).size.width;
 
     if (orderStatus == 2 && userRole == 2) {
-      // dibuat mencari driver, driver
+      // order dibuat, mencari driver, driver
       return [
         Container(
           width: mediaWidth - 70,
-          padding: EdgeInsets.symmetric(vertical: 10),
           child: RaisedButton(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-            color: Color(0XFF2e7d32),
+            color: c.primaryColor,
             child: Container(
               width: mediaWidth - 70,
               height: 50,
               child: Center(
-                child: Text("Terima Pesanan", style: TextStyle(color: Colors.white))
+                child: CustomText("Terima Pesanan", color: Colors.white)
               )
             ),
             onPressed: () {
@@ -378,113 +415,143 @@ class OrderDetailState extends State<OrderDetail> {
                 context: context,
                 title: "Berhasil",
                 showIcon: false,
-                content: Text("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
+                content: CustomText("Menunggu sender menerima permintaan anda."),
                 cancel: false,
                 defaultAction: () async {
-                  Navigator.of(context).pop();
+                  setState(() {
+                    orderStatus = 3;
+                    userRole = 1;
+                  });
+                  // Navigator.of(context).pop();
                 }
               );
             },
           )
         )
       ];
+    } else if (orderStatus == 3 && userRole == 1) {
+      return [
+        // driver ditemukan, sender
+        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+        getOrderCancel(),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 2.5)),
+        Expanded(
+          flex:1,
+          child: RaisedButton(
+            elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            color: c.primaryColor,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: CustomText("Lihat List Driver (3)", color: Colors.white)
+              )
+            ),
+            onPressed: () async {
+              bool refresh = await customNavigator(context, "orderCourierList") as bool;
+              if (refresh ?? false) {
+                setState(() {
+                    orderStatus = 4;
+                    userRole = 2;
+                  });
+              }
+            },
+          ),
+        ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+      ];
+    } else if (orderStatus == 4 && userRole == 2) {
+      // driver telah dipilih, sender
+      return [
+        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+        getOrderCancel(),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 2.5)),
+        Expanded(
+          flex:1,
+          child: RaisedButton(
+            elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            color: c.primaryColor,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: CustomText("Mulai Antar", color: Colors.white)
+              )
+            ),
+            onPressed: () async {
+              Alert(
+                context: context,
+                title: "Order akan dimulai",
+                showIcon: false,
+                content: CustomText("Pastikan kurir telah mengambil barang anda yang akan diantarkan."),
+                defaultAction: () async {
+                  setState(() {
+                    orderStatus = 5;
+                    userRole = 2;
+                  });
+                }
+              );
+            },
+          ),
+        ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+      ];
     } else {
-      if (orderStatus == 4 && userRole == 2) {
+      if (orderStatus == 5 && userRole == 2) {
         return [
-          Spacer(flex: 1),
-          Expanded(
-            flex:6,
+          Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+          getOrderCancel(),
+          Container(
+            width: 60,
+            height: 50,
+            padding: EdgeInsets.symmetric(horizontal: 5),
             child: OutlineButton(
+              padding: EdgeInsets.all(0),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               color: Colors.white,
-              child: Icon(Icons.remove_circle_outline, color: Colors.red),
-              onPressed: () {
-                Alert(
-                  context: context,
-                  title: "Batalkan Pesanan",
-                  showIcon: false,
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Divider(),
-                      Text("Kecelakaan"),
-                      Text("Lokasi penjemputan terlalu jauh"),
-                      Text("Sender tidak dapat dihubungi"),
-                      Text("Transportasi tidak muat angkut"),
-                      Text("Kendaraan rusak"),
-                      Text("Saya tidak dapat menyelesaikan orderan ini"),
-                      Text("Alasan lain"),
-                    ],
-                  ),
-                  cancel: false,
-                  actions: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        OutlineButton(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          color: Colors.white,
-                          child: Text("Kirim", style: TextStyle(color: Color(0XFF2e7d32))),
-                          onPressed: () async {
-
-                          },
-                        ),
-                        Padding(padding: EdgeInsets.all(5)),
-                        RaisedButton(
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          color: Color(0XFF2e7d32),
-                          child: Text("Batal", style: TextStyle(color: Colors.white)),
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                          },
-                        )
-                      ],
-                    ),
-                  ],
-                );
-              },
-            )
-          ),
-          Spacer(flex: 1),
-          Expanded(
-            flex:6,
-            child: OutlineButton(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              color: Colors.white,
-              child: Icon(Icons.call, color: Color(0XFF2e7d32)),
+              child: Icon(Icons.call, color: c.primaryColor),
               onPressed: () async {
 
               },
             )
           ),
-          Spacer(flex: 1),
-          Expanded(
-            flex:6,
+          Container(
+            width: 60,
+            height: 50,
+            padding: EdgeInsets.symmetric(horizontal: 5),
             child: OutlineButton(
+              padding: EdgeInsets.all(0),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               color: Colors.white,
-              child: Icon(Icons.call_end, color: Color(0XFF2e7d32)),
+              child: Image.asset(
+                getAssetImages("iconWa.png"),
+                height: 25,
+                width: 25
+              ),
               onPressed: () async {
 
               },
             )
           ),
-          Spacer(flex: 1),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 2.5)),
           Expanded(
-            flex:20,
+            flex:1,
             child: RaisedButton(
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              color: Color(0XFF2e7d32),
-              child: Text("Pesanan Sampai di titik", style: TextStyle(color: Colors.white)),
+              color: c.primaryColor,
+              child: Container(
+                height: 50,
+                child: Center(
+                  child: CustomText("Pesanan sampai di titik", color: Colors.white, fontSize: 12)
+                )
+              ),
               onPressed: () async {
                 customNavigator(context, "orderDelivered");
               },
             )
           ),
-          Spacer(flex: 1),
+          Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
         ];
       } else {
         return [
@@ -494,13 +561,13 @@ class OrderDetailState extends State<OrderDetail> {
             child: OutlineButton(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               color: Colors.white,
-              child: Text("Batal", style: TextStyle(color: Colors.green)),
+              child: CustomText("Batal", color: Colors.green),
               onPressed: () {
                 Alert(
                   context: context,
                   title: "Apakah anda yakin?",
                   showIcon: false,
-                  content: Text("Anda ingin membatalkan kerjasama dengan sender?"),
+                  content: CustomText("Anda ingin membatalkan kerjasama dengan sender?"),
                   defaultAction: () async {
                     
                   }
@@ -516,36 +583,118 @@ class OrderDetailState extends State<OrderDetail> {
             child: RaisedButton(
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              color: Color(0XFF2e7d32),
-              child: Text("Edit", style: TextStyle(color: Colors.white)),
+              color: c.primaryColor,
+              child: CustomText("Edit", color: Colors.white),
               onPressed: () async {
 
               },
             )
           ),
-          // driver ditemukan, sender
-          if (orderStatus == 3 && userRole == 2)
-          Expanded(
-            flex:12,
-            child: RaisedButton(
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              color: Color(0XFF2e7d32),
-              child: Text("Chat WA Sender", style: TextStyle(color: Colors.white)),
-              onPressed: () async {
-                String url = "https://wa.me/6281335611165?text=Selamat siang pizza hut delivery";
-
-                if (await canLaunch(url)) {
-                  await launch(url);
-                } else {
-                  throw 'Could not launch $url';
-                }
-              },
-            )
-          ),
-          Spacer(flex: 1),
         ];
       }
     }
+  }
+
+  Widget getContactWa() {
+    return Container(
+      width: 50,
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: OutlineButton(
+        padding: EdgeInsets.all(0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        color: Colors.white,
+        child: Image.asset(
+          getAssetImages("iconWa.png"),
+          height: 25,
+          width: 25
+        ),
+        onPressed: () async {
+
+        },
+      )
+    );
+  }
+
+  Widget getOrderCancel() {
+    List<String> cancelMessageList = [
+      "Kecelakaan",
+      "Lokasi penjemputan terlalu jauh",
+      "Sender tidak dapat dihubungi",
+      "Transportasi tidak muat angkut",
+      "Kendaraan rusak",
+      "Saya tidak dapat menyelesaikan orderan ini",
+      "Alasan lain"
+    ];
+    List<Widget> cancelMessageWidgetList = [];
+
+    for (var i = 0; i < cancelMessageList.length; i++) {
+      final item = cancelMessageList[i];
+
+      cancelMessageWidgetList.add(
+        RadioListTile(
+          title: CustomText("$item"),
+          groupValue: selectedMessageValue,
+          value: i,
+          onChanged: (val) {
+            setState(() {
+              selectedMessageValue = val;
+            });
+          }
+        )
+      );
+    }
+    
+    return Container(
+      width: 60,
+      height: 50,
+      padding: EdgeInsets.symmetric(horizontal: 5),
+      child: OutlineButton(
+        padding: EdgeInsets.all(0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        color: Colors.white,
+        child: Icon(Icons.remove_circle_outline, color: Colors.red),
+        onPressed: () {
+          Alert(
+            context: context,
+            title: "Batalkan Pesanan",
+            showIcon: false,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ...cancelMessageWidgetList
+              ]
+            ),
+            cancel: false,
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  OutlineButton(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    color: Colors.white,
+                    child: CustomText("Kirim", color: c.primaryColor),
+                    onPressed: () async {
+
+                    },
+                  ),
+                  Padding(padding: EdgeInsets.all(5)),
+                  RaisedButton(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    color: c.primaryColor,
+                    child: CustomText("Batal", color: Colors.white),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            ],
+          );
+        },
+      )
+    );
   }
 }

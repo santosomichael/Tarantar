@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tarantar/widgets/customText.dart';
 
 String getAssetImages(String image) {
   return "lib/assets/images/$image";
@@ -26,7 +27,7 @@ Future<T> customNavigator<T extends Object> (BuildContext context, String route,
 void Alert({
     context, String title, Widget content, List<Widget> actions, VoidCallback defaultAction,
     bool cancel = true, String type = "warning", bool showIcon = true, bool disableBackButton = false,
-    VoidCallback willPopAction, loading = false, Icon icon
+    VoidCallback willPopAction, loading = false, Icon icon, Widget titleWidget
   }) {
   
   // kalau bukan mode loading
@@ -76,7 +77,7 @@ void Alert({
         titleWidget = Row(
           children: <Widget>[
             showIcon ? Padding(padding: EdgeInsets.only(right: 20), child:icon) : Container(),
-            Text(title),
+            CustomText(title, family: "Montserrat"),
           ],
         );
         
@@ -86,7 +87,7 @@ void Alert({
       titleWidget = Row(
         children: <Widget>[
           showIcon ? Padding(padding: EdgeInsets.only(right: 20), child:icon) : Container(),
-          Text(""),
+          CustomText(""),
         ],
       );
     }
@@ -111,7 +112,7 @@ void Alert({
               defaultAction != null && cancel ?
               RaisedButton(
                 key: Key("cancel"),
-                child: Text("Cancel", style: TextStyle(color: Colors.black)),
+                child: CustomText("Cancel", color: Colors.black, fontWeight: FontWeight.bold),
                 color: Colors.white,
                 elevation: 0,
                 onPressed: () {
@@ -121,7 +122,7 @@ void Alert({
               RaisedButton(
                 key: Key("ok"),
                 color: Color(0XFF2e7d32),
-                child: Text("Ok", style: TextStyle(color: Colors.white)),
+                child: CustomText("Ok", color: Colors.white, fontWeight: FontWeight.bold),
                 onPressed: () {
                   Navigator.of(context).pop();
                   defaultAction();
@@ -135,7 +136,7 @@ void Alert({
               if (cancel != false)
               RaisedButton(
                 key: Key("cancel"),
-                child: Text("Cancel"),
+                child: CustomText("Cancel"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -170,7 +171,7 @@ void Alert({
                       ),
                     ),
                     Padding(padding: EdgeInsets.symmetric(horizontal: 15)),
-                    Text("Loading")
+                    CustomText("Loading")
                   ],
                 ),
               ]

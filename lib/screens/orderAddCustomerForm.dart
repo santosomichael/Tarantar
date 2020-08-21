@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:tarantar/configuration.dart';
 import 'package:tarantar/tools/functions.dart';
+import 'package:tarantar/widgets/customText.dart';
+import 'package:tarantar/widgets/customTextField.dart';
+import 'package:tarantar/models/address.dart';
 
 class OrderAddCustomerForm extends StatefulWidget {
   createState() {
     return OrderAddCustomerFormState();
   }
-}
-
-class Address {
-  int id;
-  String name;
-  String phone;
-  String address;
-  String latitude;
-  String longitude;
-
-  Address({this.id, this.name, this.phone, this.address, this.latitude, this.longitude});
 }
 
 class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
@@ -32,12 +25,21 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
     double mediaWidth = MediaQuery.of(context).size.width;
     
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("Buat Pesanan", style: TextStyle(color: Colors.black)),
+        title: CustomText("Buat Pesanan", color: Colors.black, family: "Montserrat"),
         iconTheme: IconThemeData(
           color: Colors.green
         ),
+        actions: [
+          Container(
+            padding: EdgeInsets.only(right: 15),
+            child: Center(
+              child: CustomText("Selesai", fontWeight: FontWeight.bold, color: c.primaryColor)
+            )
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -53,7 +55,7 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                       height: 300,
                       width: 300
                     ),
-                    Text("Kamu tidak\nmempunyai pesanan", textAlign: TextAlign.center),
+                    CustomText("Kamu tidak\nmempunyai pesanan", textAlign: TextAlign.center),
                   ],
                 );
               }
@@ -72,14 +74,14 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                           Container(
                             width: 40,
                             child: Center(
-                              child: Text("${index+1}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))
+                              child: CustomText("${index+1}", fontWeight: FontWeight.bold, fontSize: 20)
                             )
                           ),
                           Container(
                             height: 80,
                             width: 40,
                             margin: EdgeInsets.only(right: 15),
-                            color: Color(0XFF2e7d32),
+                            color: c.primaryColor,
                             child: Icon(Icons.drag_handle, color: Colors.white, size: 32),
                           ),
                           Expanded(
@@ -88,9 +90,9 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(item.name, style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text(item.phone, style: TextStyle(color: Color(0XFF2e7d32), fontWeight: FontWeight.bold)),
-                                Text(item.address, maxLines: 2, overflow: TextOverflow.ellipsis)
+                                CustomText(item.name, fontWeight: FontWeight.bold, family: "Montserrat"),
+                                CustomText(item.phone, color: c.primaryColor, fontWeight: FontWeight.bold, family: "Montserrat"),
+                                CustomText(item.address, maxLines: 2, overflow: TextOverflow.ellipsis)
                               ],
                             ),
                           ),
@@ -118,7 +120,7 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                                     context: context,
                                     title: "Apakah anda yakin?",
                                     showIcon: false,
-                                    content: Text("Anda ingin menghapus alamat ini."),
+                                    content: CustomText("Anda ingin menghapus alamat ini."),
                                     defaultAction: () async {
                                       
                                     }
@@ -162,7 +164,7 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                           child: Container(
                             height: 50,
                             child: Center(
-                              child: Text("Preview", style: TextStyle(color: Color(0XFF2e7d32)))
+                              child: CustomText("Preview", color: c.primaryColor, fontWeight: FontWeight.bold)
                             )
                           ),
                           onPressed: () {
@@ -170,7 +172,7 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                               context: context,
                               title: "Berhasil",
                               showIcon: false,
-                              content: Text("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
+                              content: CustomText("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
                               cancel: false,
                               defaultAction: () async {
                                 Navigator.of(context).pop();
@@ -184,15 +186,15 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                         flex:10,
                         child: RaisedButton(
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                          color: Color(0XFF2e7d32),
+                          color: c.primaryColor,
                           child: Container(
                             height: 50,
                             child: Center(
-                              child: Text("Tambah", style: TextStyle(color: Colors.white))
+                              child: CustomText("Tambah", color: Colors.white, fontWeight: FontWeight.bold)
                             )
                           ),
                           onPressed: () {
-                            showModalBottomSheet(         
+                            showModalBottomSheet(
                               context: context,
                               builder: (builder) {
                                 double mediaWidth = MediaQuery.of(context).size.width;
@@ -217,9 +219,9 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: <Widget>[
-                                                Text("Masukkan Tujuan", style: TextStyle(fontWeight: FontWeight.bold)),
+                                                CustomText("Masukkan Tujuan", family: "Montserrat"),
                                                 InkWell(
-                                                  child: Icon(Icons.keyboard_arrow_down, color: Color(0XFF2e7d32), size: 32),
+                                                  child: Icon(Icons.keyboard_arrow_down, color: c.primaryColor, size: 32),
                                                   onTap: () {
                                                     Navigator.pop(context);
                                                   },
@@ -235,26 +237,14 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                                             ),
                                             child: ListView(
                                               children: [
-                                                Text("Nama"),
-                                                TextField(
-                                                  decoration: InputDecoration(
-                                                    hintText: "Masukkan Nama",
-                                                  ),
-                                                ),
+                                                CustomText("Nama"),
+                                                CustomTextField(hintText: "Masukkan Nama"),
                                                 Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                                                Text("Nomor Handphone"),
-                                                TextField(
-                                                  decoration: InputDecoration(
-                                                    hintText: "Masukkan Nomor Handphone",
-                                                  ),
-                                                ),
+                                                CustomText("Nomor Handphone"),
+                                                CustomTextField(hintText: "Masukkan Nomor Handphone"),
                                                 Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                                                Text("Alamat"),
-                                                TextField(
-                                                  decoration: InputDecoration(
-                                                    hintText: "Masukkan Alamat Tujuan",
-                                                  ),
-                                                ),
+                                                CustomText("Alamat"),
+                                                CustomTextField(hintText: "Masukkan Alamat Tujuan"),
                                                 Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                                                 Row(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,7 +255,7 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                                                       margin: EdgeInsets.only(right: 15),
                                                       child: RaisedButton(
                                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                                                        color: Color(0XFF2e7d32),
+                                                        color: c.primaryColor,
                                                         child: Icon(Icons.pin_drop, color: Colors.white, size: 40),
                                                         onPressed: () {
                                                           
@@ -277,13 +267,9 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                                                       child: Column(
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: <Widget>[
-                                                          TextField(
-                                                            decoration: InputDecoration(
-                                                              hintText: "Masukkan Alamat Penjemputan",
-                                                            ),
-                                                          ),
+                                                          CustomTextField(hintText: "Masukkan Alamat Penjemputan"),
                                                           Padding(padding: EdgeInsets.symmetric(vertical: 3)),
-                                                          Text("Pastikan lokasi yang Anda tandai di peta sesuai dengan alamat yang Anda isi di atas")
+                                                          CustomText("Pastikan lokasi yang Anda tandai di peta sesuai dengan alamat yang Anda isi di atas", fontStyle: FontStyle.italic, color: Colors.grey)
                                                         ],
                                                       ),
                                                     ),
@@ -293,12 +279,12 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                                                   padding: EdgeInsets.only(bottom: 25, top: 25),
                                                   child: RaisedButton(
                                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                                                    color: Color(0XFF2e7d32),
+                                                    color: c.primaryColor,
                                                     child: Container(
                                                       width: mediaWidth / 2,
                                                       height: 50,
                                                       child: Center(
-                                                        child: Text("Tambah", style: TextStyle(color: Colors.white))
+                                                        child: CustomText("Tambah", color: Colors.white, fontWeight: FontWeight.bold)
                                                       )
                                                     ),
                                                     onPressed: () {
