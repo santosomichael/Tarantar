@@ -12,7 +12,7 @@ class OrderDetail extends StatefulWidget {
 }
 
 class OrderList {
-
+  
 }
 
 class OrderDetailState extends State<OrderDetail> {
@@ -20,6 +20,16 @@ class OrderDetailState extends State<OrderDetail> {
   List<OrderList> orderList = [];
   LatLng _kMapCenter = LatLng(-7.3329142, 112.7785162);
   Set<Circle> circleSet = Set.from([]);
+
+  int orderStatus = 4;
+  // 1 dibatalkan
+  // 2 dibuat, mencari driver
+  // 3 driver ditemukan
+  // 4 mulai mengantar
+
+  int userRole = 2;
+  // 1 sender
+  // 2 driver
 
   void initState() {
     super.initState();
@@ -86,7 +96,7 @@ class OrderDetailState extends State<OrderDetail> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("Order Detail", style: TextStyle(color: Colors.black)),
+        title: Text("Pesanan", style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.green
         ),
@@ -105,9 +115,12 @@ class OrderDetailState extends State<OrderDetail> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // kalau orderan berjalan, rute yang harus dikunjungi akan di atas
+                          if (orderStatus == 4)
+                          ...addressWidgetList,
                           Container(
                             width: mediaWidth,
-                            height: mediaWidth * 0.75,
+                            height: orderStatus != 4 ? mediaWidth * 0.75 : mediaWidth * 1.5,
                             child: GoogleMap(
                               onMapCreated: _onMapCreated,
                               compassEnabled: true,
@@ -124,11 +137,15 @@ class OrderDetailState extends State<OrderDetail> {
                               ].toSet(),
                             )
                           ),
+                          if (orderStatus != 4)
                           ...addressWidgetList
                         ],
                       ),
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+
+                    // pesanan mulai diantarkan
+                    if (orderStatus != 4)
                     Card(
                       elevation: 5,
                       child: Container(
@@ -274,6 +291,8 @@ class OrderDetailState extends State<OrderDetail> {
                       ),
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+
+                    if (orderStatus != 4)
                     Card(
                       elevation: 5,
                       child: Container(
@@ -325,53 +344,208 @@ class OrderDetailState extends State<OrderDetail> {
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10),
               child: Row(
-                children: [
-                  Spacer(flex: 1),
-                  Expanded(
-                    flex:5,
-                    child: OutlineButton(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                      color: Colors.white,
-                      child: Text("Batal", style: TextStyle(color: Colors.green)),
-                      onPressed: () {
-                        Alert(
-                          context: context,
-                          title: "Apakah anda yakin?",
-                          showIcon: false,
-                          content: Text("Anda ingin membatalkan kerjasama dengan sender?"),
-                          defaultAction: () async {
-                            
-                          }
-                        );
-                      },
-                    )
-                  ),
-                  Spacer(flex: 1),
-                  Expanded(
-                    flex:12,
-                    child: RaisedButton(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                      color: Color(0XFF2e7d32),
-                      child: Text("Chat WA Sender", style: TextStyle(color: Colors.white)),
-                      onPressed: () async {
-                        String url = "https://wa.me/6281335611165?text=Selamat siang pizza hut delivery";
-
-                        if (await canLaunch(url)) {
-                          await launch(url);
-                        } else {
-                          throw 'Could not launch $url';
-                        }
-                      },
-                    )
-                  ),
-                  Spacer(flex: 1),
-                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: getBottomButtonWidgetList()
               ),
             ),
           )
         ],
       ),
     );
+  }
+
+  List<Widget> getBottomButtonWidgetList() {
+    double mediaWidth = MediaQuery.of(context).size.width;
+
+    if (orderStatus == 2 && userRole == 2) {
+      // dibuat mencari driver, driver
+      return [
+        Container(
+          width: mediaWidth - 70,
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: RaisedButton(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+            color: Color(0XFF2e7d32),
+            child: Container(
+              width: mediaWidth - 70,
+              height: 50,
+              child: Center(
+                child: Text("Terima Pesanan", style: TextStyle(color: Colors.white))
+              )
+            ),
+            onPressed: () {
+              Alert(
+                context: context,
+                title: "Berhasil",
+                showIcon: false,
+                content: Text("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
+                cancel: false,
+                defaultAction: () async {
+                  Navigator.of(context).pop();
+                }
+              );
+            },
+          )
+        )
+      ];
+    } else {
+      if (orderStatus == 4 && userRole == 2) {
+        return [
+          Spacer(flex: 1),
+          Expanded(
+            flex:6,
+            child: OutlineButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              color: Colors.white,
+              child: Icon(Icons.remove_circle_outline, color: Colors.red),
+              onPressed: () {
+                Alert(
+                  context: context,
+                  title: "Batalkan Pesanan",
+                  showIcon: false,
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Divider(),
+                      Text("Kecelakaan"),
+                      Text("Lokasi penjemputan terlalu jauh"),
+                      Text("Sender tidak dapat dihubungi"),
+                      Text("Transportasi tidak muat angkut"),
+                      Text("Kendaraan rusak"),
+                      Text("Saya tidak dapat menyelesaikan orderan ini"),
+                      Text("Alasan lain"),
+                    ],
+                  ),
+                  cancel: false,
+                  actions: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        OutlineButton(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          color: Colors.white,
+                          child: Text("Kirim", style: TextStyle(color: Color(0XFF2e7d32))),
+                          onPressed: () async {
+
+                          },
+                        ),
+                        Padding(padding: EdgeInsets.all(5)),
+                        RaisedButton(
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          color: Color(0XFF2e7d32),
+                          child: Text("Batal", style: TextStyle(color: Colors.white)),
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    ),
+                  ],
+                );
+              },
+            )
+          ),
+          Spacer(flex: 1),
+          Expanded(
+            flex:6,
+            child: OutlineButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              color: Colors.white,
+              child: Icon(Icons.call, color: Color(0XFF2e7d32)),
+              onPressed: () async {
+
+              },
+            )
+          ),
+          Spacer(flex: 1),
+          Expanded(
+            flex:6,
+            child: OutlineButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              color: Colors.white,
+              child: Icon(Icons.call_end, color: Color(0XFF2e7d32)),
+              onPressed: () async {
+
+              },
+            )
+          ),
+          Spacer(flex: 1),
+          Expanded(
+            flex:20,
+            child: RaisedButton(
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              color: Color(0XFF2e7d32),
+              child: Text("Pesanan Sampai di titik", style: TextStyle(color: Colors.white)),
+              onPressed: () async {
+                customNavigator(context, "orderDelivered");
+              },
+            )
+          ),
+          Spacer(flex: 1),
+        ];
+      } else {
+        return [
+          Spacer(flex: 1),
+          Expanded(
+            flex:5,
+            child: OutlineButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              color: Colors.white,
+              child: Text("Batal", style: TextStyle(color: Colors.green)),
+              onPressed: () {
+                Alert(
+                  context: context,
+                  title: "Apakah anda yakin?",
+                  showIcon: false,
+                  content: Text("Anda ingin membatalkan kerjasama dengan sender?"),
+                  defaultAction: () async {
+                    
+                  }
+                );
+              },
+            )
+          ),
+          Spacer(flex: 1),
+          // dibuat mencari driver, sender
+          if (orderStatus == 2 && userRole == 1)
+          Expanded(
+            flex:12,
+            child: RaisedButton(
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              color: Color(0XFF2e7d32),
+              child: Text("Edit", style: TextStyle(color: Colors.white)),
+              onPressed: () async {
+
+              },
+            )
+          ),
+          // driver ditemukan, sender
+          if (orderStatus == 3 && userRole == 2)
+          Expanded(
+            flex:12,
+            child: RaisedButton(
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              color: Color(0XFF2e7d32),
+              child: Text("Chat WA Sender", style: TextStyle(color: Colors.white)),
+              onPressed: () async {
+                String url = "https://wa.me/6281335611165?text=Selamat siang pizza hut delivery";
+
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
+            )
+          ),
+          Spacer(flex: 1),
+        ];
+      }
+    }
   }
 }

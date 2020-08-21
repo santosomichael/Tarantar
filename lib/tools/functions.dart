@@ -132,6 +132,7 @@ void Alert({
             :
             [
               // kalau ada pilihan tombol lain, akan otomatis mengeluarkan tulisan cancel
+              if (cancel != false)
               RaisedButton(
                 key: Key("cancel"),
                 child: Text("Cancel"),

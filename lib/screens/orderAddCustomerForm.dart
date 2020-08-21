@@ -29,6 +29,8 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
 
   @override
   Widget build(BuildContext context) {
+    double mediaWidth = MediaQuery.of(context).size.width;
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -136,71 +138,193 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
               }),
               onReorder: (int oldIndex, int newIndex) {
                 setState(() {
-
                   _updateMyItems(oldIndex, newIndex);
-
                 });
-
               },
             )
           ),
           Card(
             margin: EdgeInsets.all(0),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
             elevation: 10,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
+              children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 30),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Masukkan Tujuan", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                      IconButton(
-                        icon: Icon(Icons.chevron_right, color: Color(0XFF2e7d32), size: 32)
-                      )
-                    ],
-                  ),
-                ),
-                Divider(),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical:10),
+                  padding: EdgeInsets.symmetric(vertical:15),
                   child: Row(
                     children: [
                       Spacer(flex: 2),
                       Expanded(
                         flex:10,
                         child: OutlineButton(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
                           color: Colors.white,
-                          child: Text("Lihat Rute", style: TextStyle(color: Colors.green)),
-                          onPressed: () {
-                            
-                          },
-                        )
-                      ),
-                      Spacer(flex: 1),
-                      Expanded(
-                        flex:10,
-                        child: RaisedButton(
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                          color: Color(0XFF2e7d32),
-                          child: Text("Simpan", style: TextStyle(color: Colors.white)),
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Text("Preview", style: TextStyle(color: Color(0XFF2e7d32)))
+                            )
+                          ),
                           onPressed: () {
                             Alert(
                               context: context,
                               title: "Berhasil",
                               showIcon: false,
-                              content: Text("Alamat berhasil disimpan."),
+                              content: Text("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
                               cancel: false,
                               defaultAction: () async {
                                 Navigator.of(context).pop();
                               }
                             );
                           },
-                        )
+                        ),
+                      ),
+                      Spacer(flex: 1),
+                      Expanded(
+                        flex:10,
+                        child: RaisedButton(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                          color: Color(0XFF2e7d32),
+                          child: Container(
+                            height: 50,
+                            child: Center(
+                              child: Text("Tambah", style: TextStyle(color: Colors.white))
+                            )
+                          ),
+                          onPressed: () {
+                            showModalBottomSheet(         
+                              context: context,
+                              builder: (builder) {
+                                double mediaWidth = MediaQuery.of(context).size.width;
+                                double mediaHeight = MediaQuery.of(context).size.height;
+                                
+                                return Container(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(25.0),
+                                    topRight: Radius.circular(25.0))),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Container(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 15,
+                                              vertical: 10,
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Text("Masukkan Tujuan", style: TextStyle(fontWeight: FontWeight.bold)),
+                                                InkWell(
+                                                  child: Icon(Icons.keyboard_arrow_down, color: Color(0XFF2e7d32), size: 32),
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 15,
+                                            ),
+                                            child: ListView(
+                                              children: [
+                                                Text("Nama"),
+                                                TextField(
+                                                  decoration: InputDecoration(
+                                                    hintText: "Masukkan Nama",
+                                                  ),
+                                                ),
+                                                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                                                Text("Nomor Handphone"),
+                                                TextField(
+                                                  decoration: InputDecoration(
+                                                    hintText: "Masukkan Nomor Handphone",
+                                                  ),
+                                                ),
+                                                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                                                Text("Alamat"),
+                                                TextField(
+                                                  decoration: InputDecoration(
+                                                    hintText: "Masukkan Alamat Tujuan",
+                                                  ),
+                                                ),
+                                                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                                                Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      height: 80,
+                                                      width: 80,
+                                                      margin: EdgeInsets.only(right: 15),
+                                                      child: RaisedButton(
+                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                                                        color: Color(0XFF2e7d32),
+                                                        child: Icon(Icons.pin_drop, color: Colors.white, size: 40),
+                                                        onPressed: () {
+                                                          
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex:1,
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: <Widget>[
+                                                          TextField(
+                                                            decoration: InputDecoration(
+                                                              hintText: "Masukkan Alamat Penjemputan",
+                                                            ),
+                                                          ),
+                                                          Padding(padding: EdgeInsets.symmetric(vertical: 3)),
+                                                          Text("Pastikan lokasi yang Anda tandai di peta sesuai dengan alamat yang Anda isi di atas")
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.only(bottom: 25, top: 25),
+                                                  child: RaisedButton(
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                                                    color: Color(0XFF2e7d32),
+                                                    child: Container(
+                                                      width: mediaWidth / 2,
+                                                      height: 50,
+                                                      child: Center(
+                                                        child: Text("Tambah", style: TextStyle(color: Colors.white))
+                                                      )
+                                                    ),
+                                                    onPressed: () {
+                                                      addressList.add(
+                                                        Address(id:6, name: "Linawati", phone: "08136578923", address: "Jln Manyar Rahardjo"),
+                                                      );
+
+                                                      setState(() {
+                                                        addressList = addressList;  
+                                                      });
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            );
+                          },
+                        ),
                       ),
                       Spacer(flex: 2),
                     ],
