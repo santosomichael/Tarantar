@@ -21,18 +21,16 @@ class OrderFormState extends State<OrderForm> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: CustomText("Buat Pesanan", color: Colors.black, family: "Montserrat"),
+        title: CustomText("Buat Pesanan", color: Colors.black, family: "Montserrat", fontSize: 16),
         iconTheme: IconThemeData(
-          color: Colors.green
+          color: c.primaryColor
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              customNavigator(context, "orderAddCustomerForm");
-            },
-          )
-        ],
+        leading: IconButton(
+          icon: Icon(Icons.chevron_left, color: c.primaryColor, size: 24),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: WillPopScope(
         onWillPop: onWillPop,
@@ -48,50 +46,60 @@ class OrderFormState extends State<OrderForm> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              height: 100,
-                              width: 100,
-                              child: Image.network(
-                                "http://via.placeholder.com/300",
-                              ),
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(25.0),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 5),
+                                height: 140,
+                                width: 140,
+                                child: Image.network(
+                                  "https://sweetrip.id/wp-content/uploads/2020/05/duniakulinersurabaya_84272350_541137659861429_5681105554989196814_n.jpg",
+                                ),
+                              )
                             ),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Card(
-                                  // color: Colors.grey,
-                                  child: Container(
-                                    padding: EdgeInsets.all(15),
-                                    child: CustomText("Besar File Maksimum", color: Colors.black)
+                            Expanded(
+                              flex:1,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Card(
+                                    color: Color(0XFFF6F6F6),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15)
+                                      ),
+                                      height: 95,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          CustomText("Besar File Maksimum", fontWeight: FontWeight.bold),
+                                          CustomText("2 Megabyte (2MB)"),
+                                          Padding(padding: EdgeInsets.symmetric(vertical: 2.5)),
+                                          CustomText("File yang diperbolehkan", fontWeight: FontWeight.bold),
+                                          CustomText("JPG, JPEG, PNG")
+                                        ]
+                                      )
+                                    )
                                   ),
-                                ),
-                                OutlineButton(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                                  color: Colors.white,
-                                  child: CustomText("Upload Foto", color: Colors.black),
-                                  onPressed: () {
-                                    
-                                  },
-                                ),
-                                // Card(
-                                //   color: Colors.grey,
-                                //   child: Container(
-                                //     child: Column(
-                                //       mainAxisSize: MainAxisSize.min,
-                                //       children: [
-                                //         CustomText("Besar File Maksimum", style: TextStyle(color: Colors.black)),
-                                //         CustomText("2 Megabyte (2MB)"),
-                                //         Spacer(),
-                                //         CustomText("File yang diperbolehkan"),
-                                //         CustomText("JPG, JPEG, PNG"),
-                                //       ]
-                                //     )
-                                //   )
-                                // )
-                              ],
+                                  OutlineButton(
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                                    color: Colors.white,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 35),
+                                      child: CustomText("Upload Foto", color: Colors.black)
+                                    ),
+                                    onPressed: () {
+                                      
+                                    },
+                                  )
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -106,7 +114,7 @@ class OrderFormState extends State<OrderForm> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CustomText("Tanggal Penjemputan"),
+                                  CustomText("Tanggal Pengambilan"),
                                   CustomTextField(hintText: "19 Agustus 2020")
                                 ]
                               )
@@ -117,7 +125,7 @@ class OrderFormState extends State<OrderForm> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CustomText("Jam Penjemputan"),
+                                  CustomText("Jam Pengambilan"),
                                   CustomTextField(hintText: "19:20"),
                                 ]
                               )
@@ -136,20 +144,20 @@ class OrderFormState extends State<OrderForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText("Detail Barang", fontWeight: FontWeight.bold, fontSize: 16, family: "Montserrat"),
+                        CustomText("Detail Barang", fontWeight: FontWeight.bold, fontSize: 16),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
 
                         CustomText("Kategori"),
-                        CustomTextField(hintText: "Masukkan Nama Pesanan"),
+                        CustomTextField(hintText: "Masukkan Kategori Pesanan"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
 
                         CustomText("Jumlah Barang"),
                         CustomTextField(hintText: "Masukkan Jumlah Barang"),
-                        Padding(padding: EdgeInsets.symmetric(vertical: 2.5)),
-                        CustomText("Format: Panjang x Lebar x Tinggi", fontStyle: FontStyle.italic, color: Colors.grey),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
 
                         CustomText("Dimensi per Barang"),
+                        Padding(padding: EdgeInsets.symmetric(vertical: 2.5)),
+                        CustomText("Format: Panjang x Lebar x Tinggi", fontStyle: FontStyle.italic, color: Colors.grey),
                         CustomTextField(hintText: "Masukkan Dimensi Barang"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
 
@@ -178,10 +186,10 @@ class OrderFormState extends State<OrderForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomText("Lokasi Penjemputan", fontWeight: FontWeight.bold, fontSize: 16, family: "Montserrat"),
+                        CustomText("Lokasi Pengambilan", fontWeight: FontWeight.bold, fontSize: 16, family: "Montserrat"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                        CustomText("Alamat Penjemputan"),
-                        CustomTextField(hintText: "Masukkan Alamat Penjemputan"),
+                        CustomText("Alamat Pengambilan"),
+                        CustomTextField(hintText: "Masukkan Alamat Pengambilan"),
                         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,7 +203,7 @@ class OrderFormState extends State<OrderForm> {
                                 color: c.primaryColor,
                                 child: Icon(Icons.pin_drop, color: Colors.white, size: 40),
                                 onPressed: () {
-                                  
+                                  customNavigator(context, "gpsPicker");
                                 },
                               ),
                             ),
@@ -204,7 +212,7 @@ class OrderFormState extends State<OrderForm> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  CustomTextField(hintText: "Masukkan Alamat Penjemputan"),
+                                  CustomTextField(hintText: "Masukkan Alamat Pengambilan"),
                                   Padding(padding: EdgeInsets.symmetric(vertical: 3)),
                                   CustomText("Pastikan lokasi yang Anda tandai di peta sesuai dengan alamat yang Anda isi di atas", fontStyle: FontStyle.italic, color: Colors.grey)
                                 ],
@@ -216,30 +224,90 @@ class OrderFormState extends State<OrderForm> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(bottom: 10, top: 10),
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-                    color: c.primaryColor,
-                    child: Container(
-                      width: mediaWidth - 70,
-                      height: 50,
-                      child: Center(
-                        child: CustomText("Buat Pesanan", color: Colors.white, fontWeight: FontWeight.bold)
-                      )
-                    ),
-                    onPressed: () {
-                      Alert(
-                        context: context,
-                        title: "Berhasil",
-                        showIcon: false,
-                        content: CustomText("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
-                        cancel: false,
-                        defaultAction: () async {
-                          Navigator.of(context).pop();
-                        }
-                      );
-                    },
+                // Container(
+                //   padding: EdgeInsets.only(bottom: 10, top: 10),
+                //   child: RaisedButton(
+                //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                //     color: c.primaryColor,
+                //     child: Container(
+                //       width: mediaWidth - 70,
+                //       height: 50,
+                //       child: Center(
+                //         child: CustomText("Tambahkan Alamat Pengantaran", color: Colors.white, fontWeight: FontWeight.bold)
+                //       )
+                //     ),
+                //     onPressed: () {
+                //       Alert(
+                //         context: context,
+                //         title: "Berhasil",
+                //         showIcon: false,
+                //         content: CustomText("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
+                //         cancel: false,
+                //         defaultAction: () async {
+                //           Navigator.of(context).pop();
+                //         }
+                //       );
+                //     },
+                //   ),
+                // ),
+                Card(
+                  margin: EdgeInsets.all(0),
+                  elevation: 10,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical:15),
+                        child: Row(
+                          children: [
+                            Spacer(flex: 2),
+                            Expanded(
+                              flex: 12,
+                              child: OutlineButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                                color: Colors.white,
+                                child: Container(
+                                  height: 50,
+                                  child: Center(
+                                    child: CustomText("Tambah Penerima", color: c.primaryColor, fontWeight: FontWeight.bold)
+                                  )
+                                ),
+                                onPressed: () {
+                                  customNavigator(context, "orderAddCustomerForm");
+                                },
+                              ),
+                            ),
+                            Spacer(flex: 1),
+                            Expanded(
+                              flex: 12,
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                                color: c.primaryColor,
+                                child: Container(
+                                  height: 50,
+                                  child: Center(
+                                    child: CustomText("Buat Pesanan", color: Colors.white, fontWeight: FontWeight.bold)
+                                  )
+                                ),
+                                onPressed: () {
+                                  Alert(
+                                    context: context,
+                                    title: "Berhasil",
+                                    showIcon: false,
+                                    content: CustomText("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
+                                    cancel: false,
+                                    defaultAction: () async {
+                                      Navigator.of(context).pop();
+                                    }
+                                  );
+                                },
+                              ),
+                            ),
+                            Spacer(flex: 2),
+                          ],
+                        )
+                      ),
+                    ],
                   ),
                 )
               ],

@@ -12,11 +12,11 @@ class OrderCourierList extends StatefulWidget {
 
 class OrderCourierListState extends State<OrderCourierList> {
   List<Driver> driverList = [
-    Driver(id:1, name: "Alex Sutanto"),
-    Driver(id:2, name: "Christopher Halim"),
-    Driver(id:3, name: "Rivaldi"),
-    Driver(id:4, name: "John Darmawan"),
-    Driver(id:5, name: "Subagiono"),
+    Driver(id:1, name: "Reza Ultraman", rating: 5),
+    Driver(id:2, name: "Christopher Halim", rating: 3),
+    Driver(id:3, name: "Rivaldi", rating: 4),
+    Driver(id:4, name: "John Darmawan", rating: 4),
+    Driver(id:5, name: "Subagiono", rating: 2)
   ];
 
   @override
@@ -35,9 +35,24 @@ class OrderCourierListState extends State<OrderCourierList> {
         ],
       ),
       body: ListView.builder(
-        itemCount: 5,
+        itemCount: driverList.length,
         itemBuilder: (BuildContext context, int index) {
           final item = driverList[index];
+          double iconSize = 24;
+
+          List<Widget> starWidgetList = [];
+
+          for (int i = 0; i < item.rating; i++) {
+            starWidgetList.add(
+              Icon(Icons.star, color: Colors.orangeAccent, size: iconSize)
+            );
+          }
+
+          for (int i = 0; i < 5 - item.rating; i++) {
+            starWidgetList.add(
+              Icon(Icons.star_border, color: Colors.orangeAccent, size: iconSize)
+            );
+          }
           
           return Card(
             child: InkWell(
@@ -45,27 +60,30 @@ class OrderCourierListState extends State<OrderCourierList> {
                 height: 75,
                 child: Row(
                   children: [
-                    Expanded(
-                      flex:1,
-                      child: Container()
-                    ),
-                    Expanded(
-                      flex:1,
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        child: Image.network(
-                          "https://www.1999.co.jp/itbig54/10547622.jpg",
-                        ),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      height: 75,
+                      width: 75,
+                      child: Image.network(
+                        "https://www.1999.co.jp/itbig54/10547622.jpg"
                       ),
                     ),
-                    Expanded(
-                      flex:1,
-                      child: Container()
-                    ),
+                    
                     Expanded(
                       flex:7,
-                      child: CustomText(item.name),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(item.name, fontWeight: FontWeight.bold),
+                          Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: starWidgetList
+                          )
+                        ]
+                      ),
                     ),
                     Expanded(
                       flex:2,
@@ -77,7 +95,6 @@ class OrderCourierListState extends State<OrderCourierList> {
                             title: "Apakah anda yakin?",
                             showIcon: false,
                             content: CustomText("Anda akan memilih ${item.name} sebagai kurir anda?"),
-                            cancel: false,
                             defaultAction: () async {
                               Navigator.of(context).pop(true);
                             }
@@ -89,7 +106,7 @@ class OrderCourierListState extends State<OrderCourierList> {
                 ),
               ),
               onTap: () {
-                customNavigator(context, "orderDetail");
+                
               },
             )
           );

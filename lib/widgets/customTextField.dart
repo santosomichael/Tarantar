@@ -30,5 +30,4 @@ class CustomTextField extends StatelessWidget{
       cursorColor: Color(0XFF2e7d32)
     );
   } 
-  
 }

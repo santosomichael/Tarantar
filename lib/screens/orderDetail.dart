@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:tarantar/configuration.dart';
+import 'package:tarantar/tools/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:tarantar/tools/functions.dart';
 import 'package:tarantar/widgets/customText.dart';
 import 'package:tarantar/models/order.dart';
-
+import 'package:tarantar/models/address.dart';
 class OrderDetail extends StatefulWidget {
   createState() {
     return OrderDetailState();
@@ -15,10 +15,21 @@ class OrderDetail extends StatefulWidget {
 }
 
 class OrderDetailState extends State<OrderDetail> {
+  Order order = Order(id: 2, name: "Korean Barbeque", totalDestination: 3, price: 10000, total: 10, notes: "Jangan ditumpuk ya", category: "Makanan");
+
   GoogleMapController mapController;
   List<Order> orderList = [];
-  LatLng _kMapCenter = LatLng(-7.3329142, 112.7785162);
+  LatLng _kMapCenter = LatLng(-7.331324, 112.757980);
   Set<Circle> circleSet = Set.from([]);
+
+  List<Address> addressList = [
+    Address(id:1, name: "Michael Santoso", phone: "0813356111232", address: "Jalan rungkut mutiara blok b 20", rating: 4, latitude: -7.332756, longitude: 112.778711),
+    Address(id:2, name: "Shendy Christyanto",  phone: "0813939498", address: "Jl. Siwalankerto VIII, Ab 11, Padang Pasir", rating: 4, latitude: -7.338982, longitude: 112.733674),
+    Address(id:3, name: "Felicia Santoso",  phone: "08787123234", address: "Perumahan graha tirta blok dahlia nomor 10", rating: 3, latitude: -7.351084, longitude: 112.740689),
+  ];
+
+  Map<MarkerId, Marker> markerList = <MarkerId, Marker>{};
+  Set<Polyline>_polyline = {};
 
   int selectedMessageValue = 0;
   int orderStatus = 2;
@@ -27,6 +38,7 @@ class OrderDetailState extends State<OrderDetail> {
   // 3 menunggu driver ada yang diterima
   // 4 menunggu mulai antar
   // 5 mulai mengantar
+  // 6 selesai
 
   int userRole = 2;
   // 1 sender
@@ -38,32 +50,102 @@ class OrderDetailState extends State<OrderDetail> {
   }
 
   void setCircles(LatLng point) {
-      final String circleIdVal = 'circle_id_1';
-      double radius = 2000;
-      circleSet.add(
-        Circle(
-          circleId: CircleId(circleIdVal),
-          center: point,
-          radius: radius,
-          fillColor: Colors.redAccent.withOpacity(0.5),
-          strokeWidth: 3,
-          strokeColor: Colors.redAccent
-        )
+    final String circleIdVal = 'circle_id_1';
+    double radius = 2000;
+    circleSet.add(
+      Circle(
+        circleId: CircleId(circleIdVal),
+        center: point,
+        radius: radius,
+        fillColor: Colors.redAccent.withOpacity(0.5),
+        strokeWidth: 3,
+        strokeColor: Colors.redAccent
+      )
+    );
+  }
+
+  void initMarkerList() {
+    final MarkerId markerId = MarkerId("0");
+
+    LatLng lastMapPosition = LatLng(-7.322005, 112.769728);
+
+    markerList[markerId] = Marker(
+      markerId: markerId,
+      position: LatLng(
+        lastMapPosition.latitude,
+        lastMapPosition.longitude
+      ),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      infoWindow: InfoWindow(title: "0", snippet: '*'),
+      onTap: () {
+        
+      }
+    );
+
+    List<LatLng> latLong = List();
+    latLong.add(lastMapPosition);
+
+    for (var i = 0; i < 3; i++) {
+      final address = addressList[i];
+      final MarkerId markerId = MarkerId((i+1).toString());
+
+      lastMapPosition = LatLng(address.latitude, address.longitude);
+      latLong.add(lastMapPosition);
+
+      markerList[markerId] = Marker(
+        markerId: markerId,
+        position: LatLng(
+          address.latitude,
+          address.longitude,
+        ),
+        infoWindow: InfoWindow(title: i.toString(), snippet: '*'),
+        onTap: () {
+          
+        }
       );
+
     }
+
+    _polyline.add(Polyline(
+        polylineId: PolylineId(0.toString()),
+        visible: true,
+        points: latLong,
+        color: Colors.blueAccent,
+    ));
+
+    setState(() {
+      markerList = markerList;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
     double mediaWidth = MediaQuery.of(context).size.width;
     double mediaHeight = MediaQuery.of(context).size.height;
 
-    List<String> addressList = [
-      "Zybrick Cafe Jalan Siwalankerto",
-      "De Mata Trick Eye Museum Jogja",
-      "ATM CIMB Niaga",
-    ];
-
     List<Widget> addressWidgetList = [];
+
+    addressWidgetList.add(
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 7.5),
+          child: Row(
+            children: [
+              Expanded(
+                flex:1,
+                child: Icon(
+                  Icons.person_pin_circle,
+                  color: Colors.blueAccent
+                ),
+              ),
+              Expanded(
+                flex:9,
+                child: CustomText("Jln Rungkut Gunung Lor No. 24", maxLines: 1, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold)
+              ),
+            ]
+          ),
+        )
+      );
     
     for (var i = 0; i < addressList.length; i++) {
       final item = addressList[i];
@@ -76,13 +158,13 @@ class OrderDetailState extends State<OrderDetail> {
               Expanded(
                 flex:1,
                 child: Icon(
-                  i == 0 ? Icons.person_pin_circle:Icons.swap_vertical_circle,
-                  color: i == 0 ? Colors.blueAccent:c.primaryColor
+                  Icons.swap_vertical_circle,
+                  color: c.primaryColor
                 ),
               ),
               Expanded(
                 flex:9,
-                child: CustomText(item, maxLines: 1, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold)
+                child: CustomText(item.address, maxLines: 1, overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold)
               ),
             ]
           ),
@@ -91,15 +173,22 @@ class OrderDetailState extends State<OrderDetail> {
     }
 
     void _onMapCreated(GoogleMapController controller) {
+      initMarkerList();
       mapController = controller;
     }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: CustomText("Pesanan", color: Colors.black, family: "Montserrat"),
+        title: CustomText("Pesanan", color: Colors.black, family: "Montserrat", fontSize: 16),
         iconTheme: IconThemeData(
-          color: Colors.green
+          color: c.primaryColor
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.chevron_left, color: c.primaryColor, size: 24),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
       ),
       body: Column(
@@ -127,12 +216,13 @@ class OrderDetailState extends State<OrderDetail> {
                               compassEnabled: true,
                               myLocationButtonEnabled: true,
                               myLocationEnabled: true,
-                              // markers: Set<Marker>.of(markers.values),
+                              markers: Set<Marker>.of(markerList.values),
+                              polylines: _polyline,
                               initialCameraPosition: CameraPosition(
                                 target: _kMapCenter,
-                                zoom: 12.0,
+                                zoom: 13.0,
                               ),
-                              circles: circleSet,
+                              // circles: circleSet,
                               gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>[
                                 Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer(),),
                               ].toSet(),
@@ -163,25 +253,29 @@ class OrderDetailState extends State<OrderDetail> {
                                 margin: EdgeInsets.all(15),
                                 child: Row(
                                   children: [
-                                    Container(
-                                      height: 40,
-                                      width: 40,
-                                      child: Image.network(
-                                        "https://sweetrip.id/wp-content/uploads/2020/05/duniakulinersurabaya_84272350_541137659861429_5681105554989196814_n.jpg",
-                                      ),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(vertical: 5),
+                                        height: 40,
+                                        width: 40,
+                                        child: Image.network(
+                                          "https://sweetrip.id/wp-content/uploads/2020/05/duniakulinersurabaya_84272350_541137659861429_5681105554989196814_n.jpg",
+                                        ),
+                                      )
                                     ),
                                     Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        CustomText("Botol", family: "Montserrat", fontSize: 20),
+                                        CustomText("${order.name}", family: "Montserrat", fontSize: 20),
                                         Row(
                                           children: [
-                                            CustomText("@Rp. 10.000", fontWeight: FontWeight.bold, color: c.primaryColor, family: "Montserrat"),
-                                            CustomText(" (2 titik tujuan)", fontSize: 10),
+                                            CustomText("@${numberFormat(order.price, "Rp")}", fontWeight: FontWeight.bold, color: c.primaryColor, family: "Montserrat"),
+                                            CustomText(" (${order.totalDestination} titik tujuan)", fontSize: 10),
                                           ],
                                         ),
-                                        CustomText("20 pcs", fontSize: 10, fontWeight: FontWeight.bold),
+                                        CustomText("${order.total} pcs", fontSize: 10, fontWeight: FontWeight.bold),
                                       ],
                                     ),
                                   ],
@@ -224,7 +318,7 @@ class OrderDetailState extends State<OrderDetail> {
                                 ),
                                 Expanded(
                                   flex:6,
-                                  child: CustomText("Minuman", textAlign: TextAlign.start, fontWeight: FontWeight.bold, fontSize: 12)
+                                  child: CustomText(order.category, textAlign: TextAlign.start, fontWeight: FontWeight.bold, fontSize: 12)
                                 ),
                               ],
                             ),
@@ -300,14 +394,14 @@ class OrderDetailState extends State<OrderDetail> {
                     ),
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
 
-                    if (orderStatus != 5)
+                    if (orderStatus == 4 || orderStatus == 6)
                     Card(
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomText("Informasi Sender", family: "Montserrat"),
+                            CustomText("Informasi Courier", family: "Montserrat"),
                             Container(
                               height: 60,
                               child: Row(
@@ -366,11 +460,17 @@ class OrderDetailState extends State<OrderDetail> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CustomText("Nathanael Rayestu", family: "Montserrat"),
+                            CustomText(addressList[1].name, family: "Montserrat"),
+                            IconButton(
+                              icon: Icon(Icons.directions),
+                              onPressed: () {
+
+                              }
+                            )
                           ],
                         ),
                         Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                        CustomText("Jl Siwalankerto Blok A7 No 23, Siwalankerto, Surabaya. 081335611166")
+                        CustomText("${addressList[1].address} ${addressList[1].phone}")
                       ]
                     )
                   ),
@@ -444,7 +544,7 @@ class OrderDetailState extends State<OrderDetail> {
             child: Container(
               height: 50,
               child: Center(
-                child: CustomText("Lihat List Driver (3)", color: Colors.white)
+                child: CustomText("Lihat List Driver (5)", color: Colors.white)
               )
             ),
             onPressed: () async {
@@ -465,6 +565,8 @@ class OrderDetailState extends State<OrderDetail> {
       return [
         Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
         getOrderCancel(),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 2.5)),
+        getContactWa(),
         Padding(padding: EdgeInsets.symmetric(horizontal: 2.5)),
         Expanded(
           flex:1,
@@ -496,115 +598,83 @@ class OrderDetailState extends State<OrderDetail> {
         ),
         Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
       ];
-    } else {
-      if (orderStatus == 5 && userRole == 2) {
-        return [
-          Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-          getOrderCancel(),
-          Container(
-            width: 60,
-            height: 50,
-            padding: EdgeInsets.symmetric(horizontal: 5),
-            child: OutlineButton(
-              padding: EdgeInsets.all(0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              color: Colors.white,
-              child: Icon(Icons.call, color: c.primaryColor),
-              onPressed: () async {
+    } else if (orderStatus == 5 && userRole == 2) {
+      return [
+        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+        getOrderCancel(),
+        Container(
+          width: 60,
+          height: 50,
+          padding: EdgeInsets.symmetric(horizontal: 5),
+          child: OutlineButton(
+            padding: EdgeInsets.all(0),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            color: Colors.white,
+            child: Icon(Icons.call, color: c.primaryColor),
+            onPressed: () async {
 
-              },
-            )
-          ),
-          Container(
-            width: 60,
-            height: 50,
-            padding: EdgeInsets.symmetric(horizontal: 5),
-            child: OutlineButton(
-              padding: EdgeInsets.all(0),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              color: Colors.white,
-              child: Image.asset(
-                getAssetImages("iconWa.png"),
-                height: 25,
-                width: 25
-              ),
-              onPressed: () async {
-
-              },
-            )
-          ),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 2.5)),
-          Expanded(
-            flex:1,
-            child: RaisedButton(
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              color: c.primaryColor,
-              child: Container(
-                height: 50,
-                child: Center(
-                  child: CustomText("Pesanan sampai di titik", color: Colors.white, fontSize: 12)
-                )
-              ),
-              onPressed: () async {
-                customNavigator(context, "orderDelivered");
-              },
-            )
-          ),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
-        ];
-      } else {
-        return [
-          Spacer(flex: 1),
-          Expanded(
-            flex:5,
-            child: OutlineButton(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-              color: Colors.white,
-              child: CustomText("Batal", color: Colors.green),
-              onPressed: () {
-                Alert(
-                  context: context,
-                  title: "Apakah anda yakin?",
-                  showIcon: false,
-                  content: CustomText("Anda ingin membatalkan kerjasama dengan sender?"),
-                  defaultAction: () async {
-                    
-                  }
-                );
-              },
-            )
-          ),
-          Spacer(flex: 1),
-          // dibuat mencari driver, sender
-          if (orderStatus == 2 && userRole == 1)
-          Expanded(
-            flex:12,
-            child: RaisedButton(
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              color: c.primaryColor,
-              child: CustomText("Edit", color: Colors.white),
-              onPressed: () async {
-
-              },
-            )
-          ),
-        ];
-      }
+            },
+          )
+        ),
+        getContactWa(),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 2.5)),
+        Expanded(
+          flex:1,
+          child: RaisedButton(
+            elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            color: c.primaryColor,
+            child: Container(
+              height: 50,
+              child: Center(
+                child: CustomText("Pesanan sampai di titik", color: Colors.white, fontSize: 12)
+              )
+            ),
+            onPressed: () async {
+              await customNavigator(context, "orderDelivered");
+              setState(() {
+                orderStatus = 6;
+                userRole = 1;
+              });
+            },
+          )
+        ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+      ];
+    } else if (orderStatus == 6 && userRole == 1) {
+      return [
+        Container(
+          width: mediaWidth - 70,
+          child: RaisedButton(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+            color: c.primaryColor,
+            child: Container(
+              width: mediaWidth - 70,
+              height: 50,
+              child: Center(
+                child: CustomText("Rating Driver", color: Colors.white)
+              )
+            ),
+            onPressed: () {
+              customNavigator(context, "orderRating");
+            }
+          )
+        )
+      ];
     }
   }
 
   Widget getContactWa() {
     return Container(
-      width: 50,
+      width: 60,
+      height: 50,
       padding: EdgeInsets.symmetric(horizontal: 5),
       child: OutlineButton(
         padding: EdgeInsets.all(0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: Colors.white,
         child: Image.asset(
-          getAssetImages("iconWa.png"),
+          getAssetImages("iconWaGreen.png"),
           height: 25,
           width: 25
         ),
@@ -652,7 +722,11 @@ class OrderDetailState extends State<OrderDetail> {
         padding: EdgeInsets.all(0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: Colors.white,
-        child: Icon(Icons.remove_circle_outline, color: Colors.red),
+        child: Image.asset(
+          getAssetImages("iconClose.png"),
+          height: 25,
+          width: 25
+        ),
         onPressed: () {
           Alert(
             context: context,

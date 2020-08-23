@@ -13,11 +13,9 @@ class OrderAddCustomerForm extends StatefulWidget {
 
 class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
   List<Address> addressList = [
-    Address(id:1, name: "Michael Santoso", phone: "0813356111232", address: "Jalan kedondong timur nomor 45"),
-    Address(id:2, name: "Shendy Christyanto",  phone: "0813939498", address: "Jalan pengangsaan timur nomo 20"),
-    Address(id:3, name: "Felicia Santoso",  phone: "08787123234", address: "Perumahan graha tirta blok dahlia nomor 10"),
-    Address(id:4, name: "Farenza Kharisma Putra", phone: "0813239894", address: "Jalan Menganti, Ruko Menanggal Blok A No 42, depan indomaret"),
-    Address(id:5, name: "Shandy Christyanto", phone: "0898823232", address: "Jln Pahlawan gang 3 nomor 45"),
+    Address(id:1, name: "Michael Santoso", phone: "0813356111232", address: "Jalan rungkut mutiara blok b 20", rating: 4, latitude: -7.332756, longitude: 112.778711),
+    Address(id:2, name: "Shendy Christyanto",  phone: "0813939498", address: "Jl. Siwalankerto VIII, Ab 11, Padang Pasir", rating: 4, latitude: -7.338982, longitude: 112.733674),
+    Address(id:3, name: "Felicia Santoso",  phone: "08787123234", address: "Perumahan graha tirta blok dahlia nomor 10", rating: 3, latitude: -7.351084, longitude: 112.740689),
   ];
 
   @override
@@ -25,18 +23,37 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
     double mediaWidth = MediaQuery.of(context).size.width;
     
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: CustomText("Buat Pesanan", color: Colors.black, family: "Montserrat"),
+        title: CustomText("Buat Pesanan", color: Colors.black, family: "Montserrat", fontSize: 16),
         iconTheme: IconThemeData(
-          color: Colors.green
+          color: c.primaryColor
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.chevron_left, color: c.primaryColor, size: 24),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         actions: [
           Container(
             padding: EdgeInsets.only(right: 15),
             child: Center(
-              child: CustomText("Selesai", fontWeight: FontWeight.bold, color: c.primaryColor)
+              child: InkWell(
+                child: CustomText("Selesai", fontWeight: FontWeight.bold, color: c.primaryColor),
+                onTap: () {
+                  Alert(
+                    context: context,
+                    title: "Berhasil",
+                    showIcon: false,
+                    content: CustomText("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
+                    cancel: false,
+                    defaultAction: () async {
+                      Navigator.of(context).pop();
+                    }
+                  );
+                },
+              )
             )
           )
         ],
@@ -65,6 +82,7 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
               children: List.generate(addressList.length, (index) {
                 final item = addressList[index];
                 return Card(
+                  margin: EdgeInsets.only(top: 15, left: 5, right: 5),
                   key: ValueKey(item.id),
                   child: InkWell(
                     child: Container(
@@ -168,16 +186,7 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                             )
                           ),
                           onPressed: () {
-                            Alert(
-                              context: context,
-                              title: "Berhasil",
-                              showIcon: false,
-                              content: CustomText("Buat pesanan berhasil! Menunggu kurir untuk membantu pesanan anda."),
-                              cancel: false,
-                              defaultAction: () async {
-                                Navigator.of(context).pop();
-                              }
-                            );
+                            customNavigator(context, "gpsShow");
                           },
                         ),
                       ),
@@ -258,7 +267,7 @@ class OrderAddCustomerFormState extends State<OrderAddCustomerForm> {
                                                         color: c.primaryColor,
                                                         child: Icon(Icons.pin_drop, color: Colors.white, size: 40),
                                                         onPressed: () {
-                                                          
+                                                          customNavigator(context, "gpsPicker");
                                                         },
                                                       ),
                                                     ),

@@ -95,7 +95,7 @@ class RegisterState extends State<Register> {
                           context: context,
                           title: "Berhasil",
                           showIcon: false,
-                          content: CustomText("Pendaftaran berhasil!"),
+                          content: CustomText("Pendaftaran berhasil! Cek email anda untuk mengisi password."),
                           cancel: false,
                           defaultAction: () async {
                             Navigator.of(context).pop();

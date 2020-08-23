@@ -28,6 +28,8 @@ class LoginState extends State<Login> {
         iconTheme: IconThemeData(
           color: Colors.green
         ),
+        leading: null,
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -41,7 +43,7 @@ class LoginState extends State<Login> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Image.asset(
-                    getAssetImages("orderNotFound.png"),
+                    getAssetImages("loginTop.png"),
                     height: 300,
                     width: 300
                   ),
@@ -116,6 +118,13 @@ class LoginState extends State<Login> {
               ),
             )
           ),
+          Expanded(
+            flex: 1,
+            child: Image.asset(
+              getAssetImages("banner.jpg"),
+              width: mediaWidth
+            ),
+          )
         ],
       ),
     );

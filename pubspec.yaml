@@ -19,7 +19,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_localizations:
+    sdk: flutter
   google_maps_flutter: 0.5.14+1
   url_launcher: 4.0.3
 
@@ -47,9 +48,14 @@ flutter:
   assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
-   - lib/assets/images/iconWa.png
+   - lib/assets/images/iconWaGreen.png
+   - lib/assets/images/iconWaWhite.png
+   - lib/assets/images/iconClose.png
    - lib/assets/images/account.png
    - lib/assets/images/orderNotFound.png
+   - lib/assets/images/loginTop.png
+   - lib/assets/images/banner.jpg
+   - lib/assets/images/tagline.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

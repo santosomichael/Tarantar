@@ -1,10 +1,11 @@
 class Address {
   int id;
+  double rating;
   String name;
   String phone;
   String address;
-  String latitude;
-  String longitude;
+  double latitude;
+  double longitude;
 
-  Address({this.id, this.name, this.phone, this.address, this.latitude, this.longitude});
+  Address({this.id, this.rating, this.name, this.phone, this.address, this.latitude, this.longitude});
 }

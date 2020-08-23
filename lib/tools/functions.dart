@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:tarantar/widgets/customText.dart';
 
@@ -181,4 +182,13 @@ void Alert({
       }
     );
   }
+}
+
+String numberFormat(int number, String currency) {
+  var f = NumberFormat.decimalPattern(); 
+  if (currency != "") {
+    return "$currency. " + f.format(number);
+  }
+
+  return f.format(number);
 }

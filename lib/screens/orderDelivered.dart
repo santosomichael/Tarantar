@@ -4,6 +4,7 @@ import 'package:tarantar/tools/functions.dart';
 import 'package:tarantar/widgets/customText.dart';
 import 'package:tarantar/widgets/customTextField.dart';
 import 'package:tarantar/models/address.dart';
+import 'package:tarantar/models/order.dart';
 
 class OrderDelivered extends StatefulWidget {
   createState() {
@@ -13,12 +14,12 @@ class OrderDelivered extends StatefulWidget {
 
 class OrderDeliveredState extends State<OrderDelivered> {
   List<Address> addressList = [
-    Address(id:1, name: "Michael Santoso", phone: "0813356111232", address: "Jalan kedondong timur nomor 45"),
-    Address(id:2, name: "Shendy Christyanto",  phone: "0813939498", address: "Jalan pengangsaan timur nomo 20"),
-    Address(id:3, name: "Felicia Santoso",  phone: "08787123234", address: "Perumahan graha tirta blok dahlia nomor 10"),
-    Address(id:4, name: "Farenza Kharisma Putra", phone: "0813239894", address: "Jalan Menganti, Ruko Menanggal Blok A No 42, depan indomaret"),
-    Address(id:5, name: "Shandy Christyanto", phone: "0898823232", address: "Jln Pahlawan gang 3 nomor 45"),
+    Address(id:1, name: "Michael Santoso", phone: "0813356111232", address: "Jalan rungkut mutiara blok b 20", rating: 4, latitude: -7.332756, longitude: 112.778711),
+    Address(id:2, name: "Shendy Christyanto",  phone: "0813939498", address: "Jl. Siwalankerto VIII, Ab 11, Padang Pasir", rating: 4, latitude: -7.338982, longitude: 112.733674),
+    Address(id:3, name: "Felicia Santoso",  phone: "08787123234", address: "Perumahan graha tirta blok dahlia nomor 10", rating: 3, latitude: -7.351084, longitude: 112.740689),
   ];
+
+  Order order = Order(id: 2, name: "Korean Barbeque", totalDestination: 3, price: 10000, total: 10, notes: "Jangan ditumpuk ya", category: "Makanan");
 
   @override
   Widget build(BuildContext context) {
@@ -58,20 +59,23 @@ class OrderDeliveredState extends State<OrderDelivered> {
                                 margin: EdgeInsets.all(15),
                                 child: Row(
                                   children: [
-                                    Container(
-                                      color: Colors.grey,
-                                      height: 40,
-                                      width: 40,
-                                      child: ClipOval(
-                                        // borderRadius: BorderRadius.circular(50),
-                                      ),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(vertical: 5),
+                                        height: 40,
+                                        width: 40,
+                                        child: Image.network(
+                                          "https://sweetrip.id/wp-content/uploads/2020/05/duniakulinersurabaya_84272350_541137659861429_5681105554989196814_n.jpg",
+                                        ),
+                                      )
                                     ),
                                     Padding(padding: EdgeInsets.symmetric(horizontal: 10)),
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        CustomText("Botol", family: "Montserrat", fontSize: 20),
-                                        CustomText("@Rp. 10.000", fontWeight: FontWeight.bold, color: c.primaryColor, family: "Montserrat")
+                                        CustomText("${order.name}", family: "Montserrat", fontSize: 20),
+                                        CustomText("${numberFormat(order.price, "Rp")}", fontWeight: FontWeight.bold, color: c.primaryColor, family: "Montserrat")
                                       ],
                                     ),
                                   ],
@@ -79,9 +83,9 @@ class OrderDeliveredState extends State<OrderDelivered> {
                               ),
                             ),
                             Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                            CustomText("Nathanael Rayestu", family: "Montserrat"),
+                            CustomText("Shendy Christyanto", family: "Montserrat"),
                             Padding(padding: EdgeInsets.symmetric(vertical: 2)),
-                            CustomText("Jl Siwalankerto Blok A7 No 23, Siwalankerto, Surabaya. 081335611166"),
+                            CustomText("${addressList[1].address} ${addressList[1].phone}"),
                             Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                           ],
                         ),
@@ -177,7 +181,7 @@ class OrderDeliveredState extends State<OrderDelivered> {
                             height: 50,
                             child: Center(
                               child: Image.asset(
-                                getAssetImages("iconWa.png"),
+                                getAssetImages("iconWaGreen.png"),
                                 height: 25,
                                 width: 25
                               ),
@@ -201,7 +205,7 @@ class OrderDeliveredState extends State<OrderDelivered> {
                             )
                           ),
                           onPressed: () {
-
+                            Navigator.of(context).pop();
                           },
                         ),
                       ),
